@@ -69,20 +69,31 @@ In `gradle/libs.versions.toml`, under `[versions]`:
 ```toml
 kotlin = "2.1.0"
 ```
+### 1.4 Downgrade Core Dependencies
 
-### 1.4 Java Runtime → 17
-
-DJI explicitly recommends Java 17.  
-Go to **Settings → Build, Execution, Deployment → Build Tools → Gradle** and set:
+Newer versions of these libraries can conflict with the SDK.  
+In `gradle/libs.versions.toml`:
+```toml
+coreKtx  = "1.15.0"
+activity = "1.9.3"
 ```
-Gradle JDK = 17   (or "Embedded JDK" if it is already version 17)
-```
-
 ---
 
 # 2. Build Configuration
 
-### 2.1 compileSdk / targetSdk / minSdk
+### 2.1 Enable kotlin-kapt
+
+The SDK uses annotation processors, so `kapt` must be enabled.  
+In `app/build.gradle` plugins block:
+```groovy
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.kapt")       // ← add this
+}
+```
+
+### 2.2 compileSdk / targetSdk / minSdk
 
 In `app/build.gradle`:
 ```groovy
@@ -99,25 +110,23 @@ android {
 ```
 > DJI recommends `compileSdk 35`. Using 36 may work but is untested with this SDK version.
 
-### 2.2 Downgrade Core Dependencies
+### 2.3 Java Runtime → 17
 
-Newer versions of these libraries can conflict with the SDK.  
-In `gradle/libs.versions.toml`:
-```toml
-coreKtx  = "1.15.0"
-activity = "1.9.3"
+DJI explicitly recommends Java 17.  
+Go to **Settings → Build, Execution, Deployment → Build Tools → Gradle** and set:
+```
+Gradle JDK = 17   (or "Embedded JDK" if it is already version 17)
 ```
 
-### 2.3 Enable kotlin-kapt
-
-The SDK uses annotation processors, so `kapt` must be enabled.  
-In `app/build.gradle` plugins block:
+In `app/build.gradle`:
 ```groovy
-plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.kapt")       // ← add this
-}
+compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+kotlinOptions {
+        jvmTarget = "17"
+    }
 ```
 
 > **Sync the project here and then continue **
