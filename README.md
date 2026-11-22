@@ -200,7 +200,7 @@ android {
 
 In `gradle/libs.versions.toml`, under `[versions]`:
 ```toml
-djiSdk = "5.17.0"
+djiSdk = "5.20.1"
 ```
 
 ### 4.2 Declare Library Aliases
